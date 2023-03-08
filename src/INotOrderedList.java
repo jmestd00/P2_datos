@@ -29,7 +29,7 @@ import java.util.Iterator;
  * Método {@link Object#toString()}
  *
  * El formato será mostrar el toString de los elementos separados por espacios
- * (A B C D D D B ) el toString
+ * (A B C D D D B) el toString
  *
  *
  * @author profesor
