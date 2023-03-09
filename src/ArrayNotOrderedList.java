@@ -16,8 +16,14 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 		@Override
 		public boolean hasNext() {
-		//TODO
-		return false;
+		/*
+			for (int i = 0; i < data.length; i++) {
+				if (data[i] == null)
+					return true;
+			}
+
+		 */
+			return true;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -32,7 +38,19 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
 	
 	// FIN ITERADORES
-	
+
+	private boolean hasNext(){
+		for (T list : data) {
+			if (list == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private int next(){
+		return count;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public ArrayNotOrderedList() {
@@ -53,55 +71,63 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public boolean isEmpty() {
-		for (T datas : data) {
-			if (datas != null)
-				return false;
-		}
-		return true;
-	}
-
-	private boolean isFull(){
-		for (T datas : data) {
-			if (datas == null)
-				return false;
-		}
-		return true;
+		return data[0] == null;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addFirst(T elem) {
-		if(isFull()){
+		if(!hasNext()){
 			data = (T[]) new Object[data.length * 2];
 		}
 
-		if(data[0] != null){
-			for(int i = data.length - 1; i >= 0; i--){
+		if(!isEmpty()){
+			for(int i = data.length - 1; i >= 1; i--){
 				data[i] = data[i-1];
 			}
 		}
+
 		data[0] = elem;
 		count++;
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addLast(T elem) {
-		if(isFull()){
+		if(!hasNext()){
+			//TODO copiar todo el contenido de data original a data ampliado
 			data = (T[]) new Object[data.length * 2];
 		}
 
-
+		data[next()] = elem;
+		count++;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addPenult(T elem) {
-		// TODO	
+		if(!hasNext()){
+			data = (T[]) new Object[data.length * 2];
+		}
+
+		data[next()] = data[next() - 1];
+		data[next() - 1] = elem;
+		count++;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addPos(T elem, int position) {
-		// TODO 
+		if(!hasNext()){
+			data = (T[]) new Object[data.length * 2];
+		}
+
+		for(int i = data.length - 1; i >= position; i--){
+			data[i] = data[i - 1];
+		}
+
+		data[position] = elem;
+		count++;
 	}
 
 	@Override
@@ -156,8 +182,17 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public String toString() {
-		// TODO 
-		return "";
+		StringBuilder list = new StringBuilder();
+
+		list.append("(");
+		for(int i = 0; i < data.length || i < next(); i++){
+			if(data[i] != null){
+				list.append(data[i]).append(" ");
+			}
+		}
+
+		list.append(")");
+		return list.toString();
 	}
    
 	
