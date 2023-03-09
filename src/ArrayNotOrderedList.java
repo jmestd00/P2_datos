@@ -2,7 +2,7 @@ import java.util.Iterator;
 
 
 public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
-	static final int DEFAULT_CAPACITY=10;
+	static final int DEFAULT_CAPACITY = 10;
 
     private T[] data;
 	private int count;
@@ -12,13 +12,12 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 
 	private class ArrayNotOrderedListIterator<T> implements Iterator<T> {
-		private int current=0;
+		private int current = 0;
 
 		@Override
 		public boolean hasNext() {
 		//TODO
 		return false;
-		
 		}
 
 		@SuppressWarnings("unchecked")
@@ -27,7 +26,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 			//TODO
 		return null;
 		}
-		}
+	}
 
 
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
@@ -36,37 +35,63 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public  ArrayNotOrderedList() {
-	   // TODO: inicializar los atributos (crear el array con capacidad por defecto)
+	public ArrayNotOrderedList() {
+	   this.count = 0;
+	   data = (T[]) new Object[DEFAULT_CAPACITY];
 	}
 
 	@SuppressWarnings("unchecked")
-	public  ArrayNotOrderedList(int capacity) {
-	  // TODO	
+	public ArrayNotOrderedList(int capacity) {
+	  this.count = 0;
+	  data = (T[]) new Object[capacity];
 	}
+
 	@Override
 	public int size() {
-		// TODO 
-		return 0;
+		return count;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO 
-		return false;
+		for (T datas : data) {
+			if (datas != null)
+				return false;
+		}
+		return true;
 	}
 
+	private boolean isFull(){
+		for (T datas : data) {
+			if (datas == null)
+				return false;
+		}
+		return true;
+	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addFirst(T elem) {
-		// TODO 
-		
+		if(isFull()){
+			data = (T[]) new Object[data.length * 2];
+		}
+
+		if(data[0] != null){
+			for(int i = data.length - 1; i >= 0; i--){
+				data[i] = data[i-1];
+			}
+		}
+		data[0] = elem;
+		count++;
 	}
 
 
 	@Override
 	public void addLast(T elem) {
-		// TODO 
+		if(isFull()){
+			data = (T[]) new Object[data.length * 2];
+		}
+
+
 	}
 
 	@Override
@@ -119,7 +144,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public int removeAll(T elem) throws EmptyCollectionException {
-		// TODO 
+		// TODO
 		return 0;
 	}
 
