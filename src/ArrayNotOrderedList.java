@@ -51,7 +51,22 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	private int next(){
 		return count;
 	}
-	
+
+	@SuppressWarnings({"unchecked"})
+	private void expandIfNeeded(){
+		if(!hasNext()){
+			Object[] aux = (T[]) new Object[data.length * 2];
+			for(int i = 0; i < data.length; i++){
+				aux[i] = data[i];
+			}
+			data = (T[]) aux;
+		}
+	}
+
+	private boolean isNull(T elem){
+		return elem == null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public ArrayNotOrderedList() {
 	   this.count = 0;
@@ -77,52 +92,35 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addFirst(T elem) {
-		if(!hasNext()){
-			data = (T[]) new Object[data.length * 2];
+		expandIfNeeded();
+
+		if(isNull(elem)){
+			throw new NullPointerException();
 		}
 
-		if(!isEmpty()){
-			for(int i = data.length - 1; i >= 1; i--){
-				data[i] = data[i-1];
-			}
-		}
-
-		data[0] = elem;
-		count++;
+		addPos(elem, 0);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addLast(T elem) {
-		if(!hasNext()){
-			//TODO copiar todo el contenido de data original a data ampliado
-			data = (T[]) new Object[data.length * 2];
-		}
+		expandIfNeeded();
 
-		data[next()] = elem;
-		count++;
+		addPos(elem, next());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPenult(T elem) {
-		if(!hasNext()){
-			data = (T[]) new Object[data.length * 2];
-		}
-
-		data[next()] = data[next() - 1];
-		data[next() - 1] = elem;
-		count++;
+		addPos(elem, next() - 1);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPos(T elem, int position) {
-		if(!hasNext()){
-			data = (T[]) new Object[data.length * 2];
-		}
+		expandIfNeeded();
 
-		for(int i = data.length - 1; i >= position; i--){
+		for(int i = data.length - 1; i > position; i--){
 			data[i] = data[i - 1];
 		}
 
@@ -174,10 +172,17 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public INotOrderedList<T> reverse() {
-		// TODO 
-		return null;
+		ArrayNotOrderedList reverse = new ArrayNotOrderedList();
+
+		for (T datas : data) {
+			if(datas != null){
+				reverse.addFirst(datas);
+			}
+		}
+		return reverse;
 	}
 
 	@Override

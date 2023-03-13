@@ -118,11 +118,20 @@ public class ArrayNotOrderedListTest {
         lista.iterator().next();
     }
 
+    @Test
+    public void addPos() {
+        lista.addFirst("2");
+        lista.addFirst("5");
+        lista.addPos("7", 2);
+        lista.addPenult("8");
+        lista.addLast("4");
+
+        Assert.assertEquals("(5 2 7 8 4 )", lista.toString());
+    }
 
     //TEST reverse
     @Test
     public void ArraytestReverse() {
-
         lista.addFirst("6");
         Assert.assertFalse(lista.isEmpty());
         Assert.assertEquals("(6 )", lista.toString());
