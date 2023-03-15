@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 
 public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
@@ -16,49 +17,79 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 		@Override
 		public boolean hasNext() {
-		/*
-			for (int i = 0; i < data.length; i++) {
-				if (data[i] == null)
-					return true;
-			}
-
-		 */
-			return true;
+			return current < count;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public T next() {
-			//TODO
-		return null;
-		}
-	}
-
-
-	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
-	
-	// FIN ITERADORES
-
-	private boolean hasNext(){
-		for (T list : data) {
-			if (list == null) {
-				return true;
+			if(!hasNext()){
+				throw new NoSuchElementException("Error, no hay siguiente elemento");
 			}
+
+			current++;
+			return (T) data[current-1];
 		}
-		return false;
 	}
 
-	private int next(){
-		return count;
+	private class ArrayNotOrderedListIteratorFromUntil<T> implements Iterator<T> {
+		private int current = 0;
+		private int until = 0;
+
+		public ArrayNotOrderedListIteratorFromUntil(int from, int until){
+			current = from;
+			this.until = until;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return current < until;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+            if(!hasNext()){
+                throw new NoSuchElementException("Error, no hay siguiente elemento");
+            }
+
+            current++;
+            return (T) data[current-1];
+		}
 	}
+
+	private class ArrayNotOrderedListIteratorPar<T> implements Iterator<T> {
+		private int current = 1;
+
+		@Override
+		public boolean hasNext() {
+			return current < count;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+            if(!hasNext()){
+                throw new NoSuchElementException("Error, no hay siguiente elemento");
+            }
+
+            current += 2;
+            return (T) data[current-2];
+		}
+	}
+
+    // FIN ITERADORES
+
 
 	@SuppressWarnings({"unchecked"})
 	private void expandIfNeeded(){
-		if(!hasNext()){
+		if(size() == data.length){
 			Object[] aux = (T[]) new Object[data.length * 2];
+
 			for(int i = 0; i < data.length; i++){
 				aux[i] = data[i];
 			}
+
 			data = (T[]) aux;
 		}
 	}
@@ -93,12 +124,16 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	@Override
 	public void addFirst(T elem) {
 		expandIfNeeded();
-
 		if(isNull(elem)){
 			throw new NullPointerException();
 		}
 
-		addPos(elem, 0);
+		if(isEmpty()){
+			count++;
+			data[0] = elem;
+		}else{
+			addPos(elem, 1);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -106,13 +141,18 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	public void addLast(T elem) {
 		expandIfNeeded();
 
-		addPos(elem, next());
+		data[count] = elem;
+		count++;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void addPenult(T elem) {
-		addPos(elem, next() - 1);
+		expandIfNeeded();
+
+		data[count] = data[count - 1];
+		data[count - 1] = elem;
+		count++;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -120,12 +160,16 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	public void addPos(T elem, int position) {
 		expandIfNeeded();
 
-		for(int i = data.length - 1; i > position; i--){
-			data[i] = data[i - 1];
+		if(position > count){
+			addLast(elem);
+		}else{
+			for (int i = count; i > position - 1 ; i--) {
+				data[i] = data[i - 1];
+			}
 		}
 
-		data[position] = elem;
 		count++;
+		data[position - 1] = elem;
 	}
 
 	@Override
@@ -215,7 +259,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		StringBuilder list = new StringBuilder();
 
 		list.append("(");
-		for(int i = 0; i < data.length || i < next(); i++){
+		for(int i = 0; i < data.length || i < count; i++){
 			if(data[i] != null){
 				list.append(data[i]).append(" ");
 			}
@@ -224,8 +268,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		list.append(")");
 		return list.toString();
 	}
-   
-	
+
 	@Override
 	public T removeElemPos(int position) {
 		T removed = data[position-1];
@@ -257,13 +300,12 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 	@Override
 	public Iterator<T> fromUntilIterator(int from, int until) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayNotOrderedListIteratorFromUntil<T>(from, until);
 	}
 
 	@Override
 	public Iterator<T> evenPosIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayNotOrderedListIteratorPar<T>();
 	}
 }

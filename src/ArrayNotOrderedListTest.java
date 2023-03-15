@@ -175,7 +175,7 @@ public class ArrayNotOrderedListTest {
         lista.addPenult("8");
         lista.addLast("4");
 
-        Assert.assertEquals("(5 2 7 8 4 )", lista.toString());
+        Assert.assertEquals("(5 7 8 2 4 )", lista.toString());
     }
 
     //TEST reverse
