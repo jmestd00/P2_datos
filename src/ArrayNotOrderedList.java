@@ -130,46 +130,71 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public T removeFirst() throws EmptyCollectionException {
-		// TODO 
-	
-		return null;
-		
+		T removed = data[0];
+		for (int i = 0; i < data.length - 1; i++) {
+			data[i] = data[i+1];
+		}
+		count--;
+
+		return removed;
 	}
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
-		// TODO 
-		return null;
+		T removed = data[count];
+		data[count-1] = null;
+		count--;
+
+		return removed;
 	}
 
 	@Override
 	public T removePenult() throws EmptyCollectionException {
-		// TODO 
-		return null;
+		T removed = data[count];
+		data[count-2] = data[count -1];
+		data[count-1] = null;
+		count--;
+
+		return removed;
 	}
 
 	@Override
 	public int removeElem(T elem) throws EmptyCollectionException {
-		// TODO 
-		return 0;	
+		int i = 0;
+		while(data[i] != elem){
+			i++;
+		}
+		data[i] = null;
+		count--;
+		return i+1;
 	}
 	
 	@Override
 	public T getElemPos(int position) {
-		// TODO 
-		return null;
+		return data[position-1];
 	}
 
 	@Override
 	public int getPosLast(T elem) {
-		// TODO 
-		return 0;
+		int i = count;
+		while(data[i] != elem || i <= 0){
+			i--;
+		}
+
+		return i+1;
 	}
 
 	@Override
 	public int removeAll(T elem) throws EmptyCollectionException {
-		// TODO
-		return 0;
+		int total = 0;
+		for(int i = 0; i < data.length; i++){
+			if(data[i] == elem){
+				data[i] = null;
+				total++;
+			}
+		}
+		count -= total;
+		return total;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -203,14 +228,19 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 	@Override
 	public T removeElemPos(int position) {
-		// TODO 
-		return null;
+		T removed = data[position-1];
+		data[position-1] = null;
+		for(int i = position-1; i < data.length; i++){
+			data[i] = data[i+1];
+		}
+		return removed;
 	}
 
 	@Override
 	public int removePosLast(T elem) {
-		// TODO 
-		return 0;
+		int i = getPosLast(elem);
+		removeElemPos(i);
+		return i;
 	}
 
 	@Override
@@ -221,7 +251,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
 		return new ArrayNotOrderedListIterator<T>();
 	}
 

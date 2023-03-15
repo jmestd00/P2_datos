@@ -19,6 +19,55 @@ public class ArrayNotOrderedListTest {
         assertEquals(0, lista.size());
     }
 
+    @Test
+    public void removeTest() throws EmptyCollectionException {
+        lista.addFirst("3");
+        lista.addFirst("7");
+        lista.addFirst("2");
+        lista.addFirst("5");
+        lista.addFirst("2");
+        lista.addFirst("6");
+
+        Assert.assertEquals("(6 2 5 2 7 3 )", lista.toString());
+
+        lista.removeFirst();
+        Assert.assertEquals("(2 5 2 7 3 )", lista.toString());
+
+        lista.removelast();
+        Assert.assertEquals("(2 5 2 7 )", lista.toString());
+
+        Assert.assertEquals(1, lista.removeElem("2"));
+        Assert.assertEquals("(5 2 7 )", lista.toString());
+
+        lista.removePenult();
+        Assert.assertEquals("(5 7 )", lista.toString());
+    }
+
+    @Test
+    public void removeAll() throws EmptyCollectionException {
+        lista.addFirst("4");
+        lista.addFirst("7");
+        lista.addFirst("4");
+        lista.addFirst("4");
+        lista.addFirst("8");
+        Assert.assertEquals("(8 4 4 7 4 )", lista.toString());
+
+        Assert.assertEquals(3, lista.removeAll("4"));
+        Assert.assertEquals("(8 7 )", lista.toString());
+    }
+
+    @Test
+    public void getterTest() {
+        lista.addFirst("5");
+        lista.addFirst("4");
+        lista.addFirst("2");
+        lista.addFirst("5");
+        Assert.assertEquals("(5 2 4 5 )", lista.toString());
+
+        Assert.assertEquals("2", lista.getElemPos(2));
+        Assert.assertEquals(4, lista.getPosLast("5"));
+    }
+
     // test addFirst comprueba que dispara excepción
     @Test(expected = NullPointerException.class)
     public void ArrayAddFirstElementoNuloTest() {
