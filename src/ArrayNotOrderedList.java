@@ -10,7 +10,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 	// NO SE PUEDEN AÑADIR MÁS ATRIBUTOS A LA LISTA IMPLEMENTADA CON ARRAYS
 
-	
 
 	private class ArrayNotOrderedListIterator<T> implements Iterator<T> {
 		private int current = 0;
@@ -20,7 +19,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 			return current < count;
 		}
 
-		@SuppressWarnings("unchecked")
+		
 		@Override
 		public T next() {
 			if(!hasNext()){
@@ -37,16 +36,21 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		private int until = 0;
 
 		public ArrayNotOrderedListIteratorFromUntil(int from, int until){
-			current = from;
-			this.until = until;
+			if(until > from){
+				current = until;
+				this.until = from;
+			}else{
+				current = from;
+				this.until = until;
+			}
 		}
 
 		@Override
 		public boolean hasNext() {
-			return current < until;
+			return (!isEmpty()) || current < until;
 		}
 
-		@SuppressWarnings("unchecked")
+		
 		@Override
 		public T next() {
             if(!hasNext()){
@@ -66,7 +70,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 			return current < count;
 		}
 
-		@SuppressWarnings("unchecked")
+		
 		@Override
 		public T next() {
             if(!hasNext()){
@@ -81,7 +85,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
     // FIN ITERADORES
 
 
-	@SuppressWarnings({"unchecked"})
+	//Privados
 	private void expandIfNeeded(){
 		if(size() == data.length){
 			Object[] aux = (T[]) new Object[data.length * 2];
@@ -94,22 +98,27 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		}
 	}
 
-	private boolean isNull(T elem){
-		return elem == null;
+	private void isNullPointer(T elem){
+		if(elem == null) {
+			throw new NullPointerException();
+		}
 	}
 
-	@SuppressWarnings("unchecked")
+
+	//Constructores
 	public ArrayNotOrderedList() {
 	   this.count = 0;
 	   data = (T[]) new Object[DEFAULT_CAPACITY];
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public ArrayNotOrderedList(int capacity) {
 	  this.count = 0;
 	  data = (T[]) new Object[capacity];
 	}
 
+
+	//UTIL
 	@Override
 	public int size() {
 		return count;
@@ -119,97 +128,81 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	public boolean isEmpty() {
 		return data[0] == null;
 	}
-	
-	@SuppressWarnings("unchecked")
+
+
+	//Add
 	@Override
 	public void addFirst(T elem) {
-		expandIfNeeded();
-		if(isNull(elem)){
-			throw new NullPointerException();
-		}
-
-		if(isEmpty()){
-			count++;
-			data[0] = elem;
-		}else{
-			addPos(elem, 1);
-		}
+		addPos(elem, 1);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void addLast(T elem) {
-		expandIfNeeded();
-
-		data[count] = elem;
-		count++;
+		addPos(elem, count+1);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void addPenult(T elem) {
-		expandIfNeeded();
-
-		data[count] = data[count - 1];
-		data[count - 1] = elem;
-		count++;
+		addPos(elem, count-1);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void addPos(T elem, int position) {
 		expandIfNeeded();
+		isNullPointer(elem);
 
-		if(position > count){
+		if(position-1 < 0){
+			position = 1;
+		}
+
+		//Muy grande
+		if(position-1 > count){
 			addLast(elem);
-		}else{
-			for (int i = count; i > position - 1 ; i--) {
+		}
+
+		//Muy pequeño y vacía
+		else if(position-1 <= 0 && isEmpty()){
+			data[0] = elem;
+			count++;
+		}
+
+		//Resto de casos
+		else{
+			for (int i = count; i > position-1; i--) {
 				data[i] = data[i - 1];
 			}
+			data[position - 1] = elem;
+			count++;
 		}
-
-		count++;
-		data[position - 1] = elem;
 	}
 
+
+	//Remove
 	@Override
 	public T removeFirst() throws EmptyCollectionException {
-		T removed = data[0];
-		for (int i = 0; i < data.length - 1; i++) {
-			data[i] = data[i+1];
-		}
-		count--;
-
-		return removed;
+		return removeElemPos(1);
 	}
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
-		T removed = data[count];
-		data[count-1] = null;
-		count--;
-
-		return removed;
+		return removeElemPos(count);
 	}
 
 	@Override
 	public T removePenult() throws EmptyCollectionException {
-		T removed = data[count];
-		data[count-2] = data[count -1];
-		data[count-1] = null;
-		count--;
-
-		return removed;
+		return removeElemPos(count-1);
 	}
 
 	@Override
 	public int removeElem(T elem) throws EmptyCollectionException {
 		int i = 0;
-		while(data[i] != elem){
+		while(data[i] != elem || i == 0){
 			i++;
 		}
-		data[i] = null;
-		count--;
+		removeElemPos(i+1);
 		return i+1;
 	}
 	
@@ -221,7 +214,8 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	@Override
 	public int getPosLast(T elem) {
 		int i = count;
-		while(data[i] != elem || i <= 0){
+
+		while(data[i] != elem || i == 0){
 			i--;
 		}
 
@@ -230,18 +224,21 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public int removeAll(T elem) throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
+		}
+
 		int total = 0;
 		for(int i = 0; i < data.length; i++){
 			if(data[i] == elem){
-				data[i] = null;
+				removeElemPos(i+1);
 				total++;
 			}
 		}
-		count -= total;
 		return total;
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public INotOrderedList<T> reverse() {
 		ArrayNotOrderedList reverse = new ArrayNotOrderedList();
@@ -270,17 +267,24 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	}
 
 	@Override
-	public T removeElemPos(int position) {
+	public T removeElemPos(int position){
+		if(position < 1 || position > size()){
+			throw new IllegalArgumentException("Posición no válida");
+		}
+
 		T removed = data[position-1];
-		data[position-1] = null;
-		for(int i = position-1; i < data.length; i++){
+
+		for(int i = position-1; i < data.length-1; i++){
 			data[i] = data[i+1];
 		}
+		data[count-1] = null;
+		count--;
+
 		return removed;
 	}
 
 	@Override
-	public int removePosLast(T elem) {
+	public int removePosLast(T elem){
 		int i = getPosLast(elem);
 		removeElemPos(i);
 		return i;
@@ -288,7 +292,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public String FromUntilNotIncluded(int from, int until) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -296,7 +299,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	public Iterator<T> iterator() {
 		return new ArrayNotOrderedListIterator<T>();
 	}
-
 	
 	@Override
 	public Iterator<T> fromUntilIterator(int from, int until) {
@@ -305,7 +307,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	@Override
 	public Iterator<T> evenPosIterator() {
-		// TODO Auto-generated method stub
 		return new ArrayNotOrderedListIteratorPar<T>();
 	}
 }
