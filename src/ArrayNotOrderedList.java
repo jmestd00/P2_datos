@@ -33,7 +33,7 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	}
 
 	private class ArrayNotOrderedListIteratorFromUntil<T> implements Iterator<T> {
-		private int current;
+		private int current = 0;
 		private int until;
 
 		public ArrayNotOrderedListIteratorFromUntil(int from, int until){
@@ -48,7 +48,6 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 			else if(from > size()) {
 				this.current = 0;
 				this.until = size();
-
 			}
 			else {
 				this.current = (from-1);

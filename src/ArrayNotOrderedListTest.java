@@ -189,15 +189,16 @@ public class ArrayNotOrderedListTest {
 
     @Test
     public void fromUntilTest() {
-        Iterator<String> iter = lista.fromUntilIterator(1, 4);
+        Iterator<String> iterNull = lista.fromUntilIterator(1, 4);
         assertTrue(lista.isEmpty());
-        assertFalse(iter.hasNext());
+        assertFalse(iterNull.hasNext());
 
         lista.addFirst("3");
         lista.addFirst("6");
         lista.addFirst("5");
         lista.addFirst("9");
 
+        Iterator<String> iter = lista.fromUntilIterator(1, 4);
         assertTrue(iter.hasNext());
         iter.next();
     }
