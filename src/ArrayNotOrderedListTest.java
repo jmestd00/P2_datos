@@ -105,7 +105,7 @@ public class ArrayNotOrderedListTest {
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void illegalTest() throws EmptyCollectionException {
+    public void illegalTest(){
         lista.addFirst("4");
         lista.removeElemPos(-4);
     }

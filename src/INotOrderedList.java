@@ -193,7 +193,7 @@ public interface INotOrderedList<T> {
 	 * @throws IllegalArgumentException si position no está entre 1 y size()
 	 * 
 	 */
-	public T removeElemPos(int position);
+	public T removeElemPos(int position) throws EmptyCollectionException;
 
 	
 	/**
@@ -210,7 +210,7 @@ public interface INotOrderedList<T> {
 	 * @throws NoSuchElementException si elem no está en la lista.
 	 * 
 	 */
-	public int removePosLast(T elem);
+	public int removePosLast(T elem) throws EmptyCollectionException;
 
 	/**
 	 * Devuelve la posición de la última aparición del elemento.
