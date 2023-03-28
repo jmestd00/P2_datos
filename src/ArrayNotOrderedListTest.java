@@ -62,11 +62,10 @@ public class ArrayNotOrderedListTest {
         lista.addLast("5");
         assertEquals("(7 3 4 5 )", lista.toString());
 
-        lista.addPos("1", -1);
+        lista.addPos("1", 1);
         lista.addPos("8", 8);
         lista.addPos("0", 2);
         assertEquals("(1 0 7 3 4 5 8 )", lista.toString());
-
     }
 
 
@@ -100,12 +99,12 @@ public class ArrayNotOrderedListTest {
         assertEquals("2", lista.removePenult());
         assertEquals("(8 5 4 )", lista.toString());
 
-        assertEquals(2, lista.removeElem("5"));
-        assertEquals("(8 4 )", lista.toString());
+        assertEquals(3, lista.removeElem("4"));
+        assertEquals("(8 5 )", lista.toString());
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void illegalTest(){
+    public void illegalTest() throws EmptyCollectionException {
         lista.addFirst("4");
         lista.removeElemPos(-4);
     }

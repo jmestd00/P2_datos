@@ -37,18 +37,28 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		private int until;
 
 		public ArrayNotOrderedListIteratorFromUntil(int from, int until){
-			if(until > from){
-				current = until;
-				this.until = from;
-			}else{
-				current = from;
+			if(from <= 0) {
+				this.current = 0;
+				this.until = until-1;
+			}
+			else if(until > size()) {
+				this.current = from - 1;
+				this.until = count;
+			}
+			else if(from > size()) {
+				this.current = 0;
+				this.until = size();
+
+			}
+			else {
+				this.current = (from-1);
 				this.until = until;
 			}
 		}
 
 		@Override
 		public boolean hasNext() {
-			return (!isEmpty()) || current < until;
+			return current < until;
 		}
 
 
@@ -149,7 +159,18 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	
 	@Override
 	public void addPenult(T elem) {
-		addPos(elem, count-1);
+		isNullPointer(elem);
+		expandIfNeeded();
+
+		if(isEmpty()){
+			data[0] = elem;
+		}
+		else{
+			data[count] = data[count-1];
+			data[count-1] = elem;
+
+		}
+		count++;
 	}
 
 	
@@ -158,8 +179,8 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		expandIfNeeded();
 		isNullPointer(elem);
 
-		if(position-1 < 0){
-			position = 1;
+		if(position < 1){
+			throw new IllegalArgumentException();
 		}
 
 		//Muy grande
@@ -186,47 +207,90 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 
 	//Remove
 	@Override
-	public T removeFirst() {
+	public T removeFirst() throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
+		}
 		return removeElemPos(1);
 	}
 
 	@Override
-	public T removelast() {
+	public T removelast() throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
+		}
 		return removeElemPos(count);
 	}
 
 	@Override
-	public T removePenult() {
+	public T removePenult() throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
+		}
+		if(size() < 2){
+			throw new NoSuchElementException();
+		}
 		return removeElemPos(count-1);
 	}
 
 	@Override
-	public int removeElem(T elem) {
+	public int removeElem(T elem) throws EmptyCollectionException {
+		int counter = 0;
+
+		isNullPointer(elem);
+
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
+		}
+
+		for (int i = 0; i < count; i++) {
+			if(data[i].equals(elem)){
+				counter++;
+			}
+		}
+		if(counter == 0){
+			throw new NoSuchElementException();
+		}
+
 		int i = 0;
-		while(data[i] != elem || i == 0){
+		while(!data[i].equals(elem)){
 			i++;
 		}
+
 		removeElemPos(i+1);
 		return i+1;
 	}
-	
+
 	@Override
-	public T getElemPos(int position) {
-		if(position < 1 || position > count){
-			throw new IllegalArgumentException();
+	public T removeElemPos(int position) throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
 		}
-		return data[position-1];
+
+		if(position < 1 || position > size()){
+			throw new IllegalArgumentException("Posición no válida");
+		}
+
+		T removed = data[position-1];
+
+		for(int i = position-1; i < data.length-1; i++){
+			data[i] = data[i+1];
+		}
+		data[count-1] = null;
+		count--;
+
+		return removed;
 	}
 
 	@Override
-	public int getPosLast(T elem) {
-		int i = count;
-
-		while(data[i] != elem || i == 0){
-			i--;
+	public int removePosLast(T elem) throws EmptyCollectionException {
+		if(isEmpty()){
+			throw new EmptyCollectionException("lista");
 		}
 
-		return i+1;
+		int i = getPosLast(elem);
+		removeElemPos(i);
+		return i;
 	}
 
 	@Override
@@ -245,6 +309,42 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 		return total;
 	}
 
+
+	//Getters
+	@Override
+	public T getElemPos(int position) {
+		if(position < 1 || position > count){
+			throw new IllegalArgumentException();
+		}
+		return data[position-1];
+	}
+
+	@Override
+	public int getPosLast(T elem){
+		int counter = 0;
+
+		if (elem == null) {
+			throw new NullPointerException();
+		}
+
+		for (int i = 0; i < count; i++) {
+			if(data[i].equals(elem)){
+				counter++;
+			}
+		}
+		if(counter == 0){
+			throw new NoSuchElementException();
+		}
+
+		int i = count-1;
+		while(!data[i].equals(elem)){
+			i--;
+		}
+
+		return i+1;
+	}
+
+	//Reverse
 	@SuppressWarnings("unchecked")
 	@Override
 	public INotOrderedList<T> reverse() {
@@ -274,32 +374,29 @@ public class ArrayNotOrderedList<T> implements INotOrderedList<T> {
 	}
 
 	@Override
-	public T removeElemPos(int position){
-		if(position < 1 || position > size()){
-			throw new IllegalArgumentException("Posición no válida");
-		}
-
-		T removed = data[position-1];
-
-		for(int i = position-1; i < data.length-1; i++){
-			data[i] = data[i+1];
-		}
-		data[count-1] = null;
-		count--;
-
-		return removed;
-	}
-
-	@Override
-	public int removePosLast(T elem){
-		int i = getPosLast(elem);
-		removeElemPos(i);
-		return i;
-	}
-
-	@Override
 	public String FromUntilNotIncluded(int from, int until) {
-		return null;
+		StringBuilder str = new StringBuilder();
+
+		if(from <= 0 || until <= 0 || from > until){
+			throw new IllegalArgumentException();
+		}
+
+		if(until > size()){
+			str.append("(");
+			for (int i = from; i < count; i++) {
+				str.append(data[i]).append(" ");
+			}
+			str.append(")");
+		}else if(from > size()){
+			str.append("()");
+		}else{
+			str.append("(");
+			for (int i = from; i < until-1; i++) {
+				str.append(data[i]).append(" ");
+			}
+			str.append(")");
+		}
+		return str.toString();
 	}
 
 	@Override
