@@ -20,10 +20,8 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 
 		Node<T> next;
 	}
-	///////
-	///// ITERADOR normal //////////
 
-	//@SuppressWarnings("hiding")
+	@SuppressWarnings("hiding")
 	private class LinkedListIterator<T> implements Iterator<T> {
 		Node<T> current;
 
@@ -114,9 +112,7 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 			return elem;
 		}
 	}
-	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
 
-		// FIN ITERADORES
 
 	private void comprobation(T elem){
 		if (elem == null) {
@@ -345,8 +341,6 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 			aux = aux.next;
 		}
 
-		// [5]-[]-[5]-[]-[5]-NULL
-
 		return count;
 	}
 
@@ -409,11 +403,11 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 		int count = 1;
 		T elem;
 
-		if(position < 1 || position > size()){
-			throw new IllegalArgumentException();
-		}
-		else if(isEmpty()){
+		if(isEmpty()){
 			throw new EmptyCollectionException("lista");
+		}
+		else if(position < 1 || position > size()){
+			throw new IllegalArgumentException();
 		}
 		else if(position == 1){
 			elem = removeFirst();
@@ -441,7 +435,48 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 
 	@Override
 	public String FromUntilNotIncluded(int from, int until) {
-		return null;//new LinkedListIteratorFromUntil<T>(from, until, front);
+		StringBuilder str = new StringBuilder();
+		Node<T> aux = front;
+		int finalPos = from;
+
+		if(from > until || from <= 0){
+			throw new IllegalArgumentException();
+		}
+
+		if(until > size()){
+			int position = 0;
+			while(position < from){
+				aux = aux.next;
+				position++;
+			}
+			str.append("(");
+
+			while(aux != null && finalPos < until - 1){
+				str.append(aux.elem).append(" ");
+				aux = aux.next;
+				finalPos++;
+			}
+
+			str.append(")");
+		}else if(from > size()){
+			str.append("()");
+		}else{
+			int position = 0;
+			while(position < from){
+				aux = aux.next;
+				position++;
+			}
+			str.append("(");
+
+			while(finalPos < until - 1){
+				str.append(aux.elem).append(" ");
+				aux = aux.next;
+				finalPos++;
+			}
+
+			str.append(")");
+		}
+		return str.toString();
 	}
 
 	@Override
@@ -459,4 +494,3 @@ public class LinkedNotOrderedList<T> implements INotOrderedList<T>{
 		return new LinkedListIteratorFromUntil<>(from, until, front);
 	}
 }
-

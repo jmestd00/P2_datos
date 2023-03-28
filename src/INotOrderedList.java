@@ -1,36 +1,25 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * TAD 'INotOrderedList'
- *
  * Almacena una colección de objetos de tipo <code>T</code>, permitiendo
  * elementos repetidos.
- *
  * Ejemplo: (A B C A B D )
- *
- *
  * Excepciones
- *
  * No se permiten elementos <code>null</code>. Si a cualquier método que recibe
  * un elemento se le pasa el valor <code>null</code>, lanzará una excepción
  * {@link NullPointerException}.
- *
  * Los valores de parámetros <code>position</code> deben ser mayores que cero y
  * nunca negativos. Si se recibe un valor negativo o cero se lanzará
  * {@link IllegalArgumentException}.
- *
- *
  * Constructores
- *
  * Se definirá un constructor por defecto que inicialice la instancia como lista
  * vacía.
- *
- *
  * Método {@link Object#toString()}
  *
  * El formato será mostrar el toString de los elementos separados por espacios
  * (A B C D D D B) el toString
- *
  *
  * @author profesor
  *
@@ -85,9 +74,8 @@ public interface INotOrderedList<T> {
 	/**
 	 * Añade un elemento como penúltimo elemento de la lista
 	 * <p>
-	 * Si una lista l contiene (A B C) y hacemos l.addPenult("D") la lista quedará
-	 * (A B D C)
-	 * 
+	 * Si una lista l contiene (A B C ) y hacemos l.addPenult("D") la lista quedará
+	 * (A B D C )
 	 * Si la lista está vacía lo inserta normal
 	 * 
 	 * @param elem el elemento a añadir
@@ -134,7 +122,7 @@ public interface INotOrderedList<T> {
 	 * @throws EmptyCollectionException si la lista es vacía
 	 * 
 	 */
-	public T removelast() throws EmptyCollectionException;;
+	public T removelast() throws EmptyCollectionException;
 
 	/**
 	 * Elimina y devuelve el penúltimo elemento de la lista.
@@ -146,7 +134,7 @@ public interface INotOrderedList<T> {
 	 * @throws NoSuchElementException   si la lista solo tiene un elemento
 	 * 
 	 */
-	public T removePenult() throws EmptyCollectionException;;
+	public T removePenult() throws EmptyCollectionException;
 
 	/**
 	 * Elimina la primera aparición del elemento y devuelve la posición en la que estaba.
@@ -155,13 +143,13 @@ public interface INotOrderedList<T> {
 	 * quedará (A C B ) y devolverá 2
 	 * 
 	 * @param elem el elemento a eliminar
-	 * @return posicioon donde estaba el elemento
+	 * @return posición donde estaba el elemento
 	 * 
 	 * @throws EmptyCollectionException si la lista es vacía
 	 * @throws NoSuchElementException   si la lista no contiene el elemento
 	 * 
 	 */
-	public int removeElem(T elem) throws EmptyCollectionException;;
+	public int removeElem(T elem) throws EmptyCollectionException;
 
 	/**
 	 * Devuelve el elemento que está en position.
@@ -170,7 +158,6 @@ public interface INotOrderedList<T> {
 	 * l.getElemPos(1) -> A <br>
 	 * l.getElemPos(3) -> C <br>
 	 * l.getElemPos(10) -> IllegalArgumentException
-	 * 
 	 * 
 	 * @param position posición a comprobar para devolver el elemento
 	 * 
@@ -186,7 +173,6 @@ public interface INotOrderedList<T> {
 	 * l.removeElemPos(1) -> A , l queda (B C D E ) <br> 
 	 * Dada l=(A B C D E ); l.removeElemPos(3) -> C , l queda (A B D E ) <br>
 	 * Dada l=(A B C D E ); l.removeElemPos(10) -> IllegalArgumentException
-	 * 
 	 * 
 	 * @param position posición a comprobar para devolver y eliminar el elemento
 	 * 
@@ -226,7 +212,7 @@ public interface INotOrderedList<T> {
 	 * @throws NoSuchElementException si elem no está en la lista.
 	 * 
 	 */
-	public int getPosLast(T elem);
+	public int getPosLast(T elem) throws EmptyCollectionException;
 
 	/**
 	 * Elimina todas las apariciones del elemento y devuelve el número de instancias
@@ -238,7 +224,7 @@ public interface INotOrderedList<T> {
 	 * l.removeAll("Z") -> NoSuchElementException
 	 * 
 	 * @param elem elemento a eliminar.
-	 * @throws EmptyCollectionException 
+	 * @throws EmptyCollectionException si la colección está vacía
 	 * 
 	 * @throws NullPointerException   si elem es <code>null</code>
 	 * @throws NoSuchElementException si elem no está en la lista.
@@ -277,7 +263,7 @@ public interface INotOrderedList<T> {
 	 *              (no incluida)
 	 * @param until posición hasta la que se incluyen elementos (no incluida)
 	 * 
-	 * @return cadena formada por el tosString() de los  elementos en el rango 
+	 * @return cadena formada por el tosString() de los elementos en el rango
 	 *          establecido por los dos parámetros (NO INCLUIDOS).
 	 *
 	 * @throws IllegalArgumentException si from o until son <=0 ; o si until < from
@@ -290,7 +276,6 @@ public interface INotOrderedList<T> {
 	 * elemento. <br>
 	 *
 	 * Por ejemplo, para una lista x con elementos (A B C D E)
-	 *
 	 * el iterador creado con x.iterator() devuelve en sucesivas llamadas a next():
 	 * A, B, C, D y E.
 	 *
@@ -303,7 +288,6 @@ public interface INotOrderedList<T> {
 	 * <br>
 	 *
 	 * Por ejemplo, para una lista x con elementos (A B C D E )
-	 *
 	 * el iterador creado con x.evenPosIterator() devuelve en sucesivas
 	 * llamadas a next(): B y D.
 	 *
@@ -315,9 +299,7 @@ public interface INotOrderedList<T> {
 	/**
 	 * Devuelve un iterador que recorre los elementos que ocupan posiciones desde from 
 	 * hasta until (ambas incluidas) en la lista.
-	 * 
 	 * Por ejemplo, para una lista x con elementos (1 2 3 4 5 6 7 8 9 )
-	 * 
 	 * el iterador creado con x.fromUntilIterator(3,6) devuelve en sucesivas llamadas a
 	 * next(): 3, 4, 5, 6 
 	 *
