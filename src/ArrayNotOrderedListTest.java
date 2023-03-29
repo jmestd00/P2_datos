@@ -69,7 +69,6 @@ public class ArrayNotOrderedListTest {
     }
 
 
-
     @Test
     public void removeTest() throws EmptyCollectionException {
         lista.addFirst("1");
@@ -103,17 +102,16 @@ public class ArrayNotOrderedListTest {
         assertEquals("(8 5 )", lista.toString());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void illegalTest() throws EmptyCollectionException {
         lista.addFirst("4");
         lista.removeElemPos(-4);
     }
 
-    @Test (expected = EmptyCollectionException.class)
+    @Test(expected = EmptyCollectionException.class)
     public void removeAllEmptyTest() throws EmptyCollectionException {
         lista.removeAll("3");
     }
-
 
 
     @Test
@@ -127,7 +125,6 @@ public class ArrayNotOrderedListTest {
         assertEquals("2", lista.getElemPos(2));
         assertEquals(4, lista.getPosLast("5"));
     }
-
 
 
     @Test
@@ -144,7 +141,6 @@ public class ArrayNotOrderedListTest {
         assertEquals("(6 5 4 4 )", lista.reverse().toString());
         assertEquals("(4 4 5 6 )", lista.toString()); // queda en el mismo estado
     }
-
 
 
     //test de iteradores
